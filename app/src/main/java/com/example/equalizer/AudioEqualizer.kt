@@ -1,4 +1,5 @@
 package com.example.equalizer
+
 import android.media.audiofx.Equalizer
 import androidx.compose.runtime.mutableStateListOf
 
