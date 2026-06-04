@@ -1,4 +1,3 @@
-package com.example.equalizer
 pluginManagement {
     repositories {
         google()
