@@ -1,12 +1,11 @@
 package com.example.equalizer
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Speaker
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,11 +17,14 @@ import kotlinx.coroutines.launch
 
 // Simple state-based navigation structure
 sealed class AppScreen(val route: String, val icon: ImageVector) {
-    object Equalizer : AppScreen("Equalizer", Icons.Default.Speaker)
+    // Swapped Speaker for PlayArrow to use the Core icon library
+    object Equalizer : AppScreen("Equalizer", Icons.Default.PlayArrow)
     object Settings : AppScreen("Settings", Icons.Default.Settings)
     object About : AppScreen("About", Icons.Default.Info)
 }
 
+// Added OptIn to satisfy the compiler's strict checks on Material 3 components
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenScaffold(audioEq: AudioEqualizer) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -118,11 +120,9 @@ fun EqualizerScreen(audioEq: AudioEqualizer) {
     }
 }
 
-// THIS FIXES THE SLIDER ISSUE
 @Composable
 fun BandSliderVertical(band: AudioEqualizer.Band, onLevelChange: (Short) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        // Frequency Label (e.g., 60 Hz) - moved closer to the slider
         Text(
             text = "${band.centerFreq / 1000} Hz",
             style = MaterialTheme.typography.labelSmall,
@@ -130,12 +130,10 @@ fun BandSliderVertical(band: AudioEqualizer.Band, onLevelChange: (Short) -> Unit
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        // THE FIX IS HERE: Explicitly dimension the Box and the Slider
-        // Container defines the final visual vertical space (250dp)
         Box(
             modifier = Modifier
-                .height(250.dp) // The intended vertical height
-                .width(48.dp),  // Width per band
+                .height(250.dp) 
+                .width(48.dp),  
             contentAlignment = Alignment.Center
         ) {
             Slider(
@@ -143,7 +141,7 @@ fun BandSliderVertical(band: AudioEqualizer.Band, onLevelChange: (Short) -> Unit
                 onValueChange = { onLevelChange(it.toInt().toShort()) },
                 valueRange = band.minLevel.toFloat()..band.maxLevel.toFloat(),
                 modifier = Modifier
-                    .width(250.dp) // <- This stretches the slider horizontally *before* rotation.
+                    .width(250.dp)
                     .graphicsLayer {
                         rotationZ = 270f
                     },
@@ -157,7 +155,6 @@ fun BandSliderVertical(band: AudioEqualizer.Band, onLevelChange: (Short) -> Unit
         
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Decibel Label (e.g., 0 dB) - moved closer to the slider
         Text(
             text = "${band.level / 100} dB",
             style = MaterialTheme.typography.labelMedium,
@@ -165,10 +162,6 @@ fun BandSliderVertical(band: AudioEqualizer.Band, onLevelChange: (Short) -> Unit
         )
     }
 }
-
-// ---------------------------------------------------------
-// Placeholder and Content Screens for New Menu Sections
-// ---------------------------------------------------------
 
 @Composable
 fun SettingsScreenContent() {
@@ -193,7 +186,6 @@ fun SettingsScreenContent() {
     }
 }
 
-// THIS SECTION ADDS VERSIONS AND CONTRIBUTORS
 @Composable
 fun AboutScreenContent() {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -203,7 +195,6 @@ fun AboutScreenContent() {
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Versions Section
         Text(text = "Versions & Compatibility", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(8.dp))
         AboutItem("App Version", "1.0 Debug Build")
@@ -214,13 +205,11 @@ fun AboutScreenContent() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Contributors Section
         Text(text = "Credits", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(8.dp))
         AboutItem("Main Developer", "AarushChaurasiya (Lead)")
         AboutItem("Architect & Guide", "The AI Assistant")
         AboutItem("Core Libraries", "Jetpack Compose / Material 3")
-
     }
 }
 
