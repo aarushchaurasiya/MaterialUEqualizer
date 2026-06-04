@@ -1,3 +1,4 @@
+package com.example.equalizer
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
