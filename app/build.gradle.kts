@@ -1,4 +1,3 @@
-package com.example.equalizer
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
